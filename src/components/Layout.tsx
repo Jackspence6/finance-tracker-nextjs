@@ -10,10 +10,10 @@ export default function Layout({ children }: Props) {
         <div className="min-h-screen flex bg-gray-100">
 
             {/* Sidebar */}
-            <aside className="w-64 bg-white shadow-lg p-6 flex flex-col">
-                <h1 className="text-black text-2xl font-bold mb-8">Finance</h1>
+            <aside className="w-64 bg-black shadow-lg p-6 flex flex-col">
+                <h1 className="text-white text-2xl font-bold mb-8">Finance</h1>
 
-                <nav className="flex flex-col gap-4 text-black">
+                <nav className="flex flex-col gap-4 text-white">
                     <Link href="/" className="font-semibold text-left hover:underline">
                         Overview
                     </Link>
