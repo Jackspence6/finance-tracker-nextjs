@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import PotItem from "../../components/pots/PotItem";
 import EditPotModal from "../../components/pots/EditPotModal";
@@ -11,19 +11,23 @@ type Pot = {
     title: string;
     currentAmount: number;
     targetAmount: number;
+    theme: string;
 };
 
 export default function PotsPage() {
-    const pots: Pot[] = [
-        { id: 1, title: "Vacation", currentAmount: 400, targetAmount: 1000 },
-        { id: 2, title: "New Laptop", currentAmount: 500, targetAmount: 800 },
-        { id: 3, title: "Emergency Fund", currentAmount: 1200, targetAmount: 1500 },
-        { id: 4, title: "Home Decor", currentAmount: 200, targetAmount: 500 },
-    ];
-
+    const [pots, setPots] = useState<Pot[]>([]);
     const [selectedPot, setSelectedPot] = useState<Pot | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+    useEffect(() => {
+        async function fetchData() {
+            const res = await fetch("/api/pots");
+            const data: Pot[] = await res.json();
+            setPots(data);
+        }
+        fetchData();
+    }, []);
 
     return (
         <Layout>

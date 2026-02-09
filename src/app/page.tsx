@@ -3,18 +3,21 @@ import Link from "next/link";
 import Layout from "../components/Layout";
 import { getBalance, Balance } from "../../lib/balances";
 import { getBudgets, Budget } from "../../lib/budgets";
+import { getPots, Pot } from "../../lib/pots";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
   const budgets: Budget[] = await getBudgets();
+  const pots: Pot[] = await getPots();
 
   const totalBudgetSpent = budgets.reduce((acc, b) => acc + b.spent, 0);
   const totalBudgetLimit = budgets.reduce((acc, b) => acc + b.limit, 0);
-
   const totalBudgetPercentage =
     totalBudgetLimit > 0
       ? Math.min(100, (totalBudgetSpent / totalBudgetLimit) * 100)
       : 0;
+
+  const totalPotSaved = pots.reduce((acc, p) => acc + p.currentAmount, 0);
 
   return (
     <Layout>
@@ -46,6 +49,7 @@ export default async function OverviewPage() {
 
         {/* Left column: Pots & Transactions */}
         <div className="w-[55%] flex flex-col gap-6">
+
           {/* Pots Card */}
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
@@ -56,25 +60,17 @@ export default async function OverviewPage() {
             </div>
 
             <h4 className="text-lg font-semibold mb-4">Total Saved</h4>
-            <p className="text-2xl font-bold mb-6">$3,500</p>
+            <p className="text-2xl font-bold mb-6">${totalPotSaved.toLocaleString()}</p>
 
             <ul className="space-y-2">
-              <li className="flex justify-between">
-                <span>Vacation</span>
-                <span>$1,000</span>
-              </li>
-              <li className="flex justify-between">
-                <span>New Laptop</span>
-                <span>$800</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Emergency Fund</span>
-                <span>$1,200</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Home Decor</span>
-                <span>$500</span>
-              </li>
+              {pots.map((p) => (
+                <li key={p.id} className="flex justify-between">
+                  <span>{p.title}</span>
+                  <span>
+                    ${p.currentAmount.toLocaleString()} / ${p.targetAmount.toLocaleString()}
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -82,10 +78,7 @@ export default async function OverviewPage() {
           <div className="flex-1 p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Transactions</h3>
-              <Link
-                href="/transactions"
-                className="text-blue-500 hover:underline text-sm"
-              >
+              <Link href="/transactions" className="text-blue-500 hover:underline text-sm">
                 View All
               </Link>
             </div>
