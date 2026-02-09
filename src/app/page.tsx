@@ -1,8 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import Layout from "../components/Layout";
+import { getBalance, Balance } from "../../lib/balances";
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const balance: Balance | null = await getBalance();
+
   return (
     <Layout>
       <h1 className="text-3xl font-bold mb-6">Overview</h1>
@@ -11,15 +14,21 @@ export default function OverviewPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold">Current Balance</h2>
-          <p className="text-2xl font-bold">$0.00</p>
+          <p className="text-2xl font-bold">
+            ${balance ? parseFloat(balance.current_balance).toFixed(2) : "0.00"}
+          </p>
         </div>
         <div className="p-4 bg-white rounded-lg shadow">
           <h2 className="text-lg font-semibold">Income</h2>
-          <p className="text-2xl font-bold">$0.00</p>
+          <p className="text-2xl font-bold">
+            ${balance ? parseFloat(balance.income).toFixed(2) : "0.00"}
+          </p>
         </div>
         <div className="p-4 bg-white rounded-lg shadow">
           <h2 className="text-lg font-semibold">Expenses</h2>
-          <p className="text-2xl font-bold">$0.00</p>
+          <p className="text-2xl font-bold">
+            ${balance ? parseFloat(balance.expenses).toFixed(2) : "0.00"}
+          </p>
         </div>
       </section>
 

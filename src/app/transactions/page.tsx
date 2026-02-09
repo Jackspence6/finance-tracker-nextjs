@@ -1,45 +1,10 @@
-"use client";
-
-import React, { useState } from "react";
-import Layout from "../../components/Layout";
+// src/app/transactions/page.tsx
 import Image from "next/image";
+import Layout from "../../components/Layout";
+import { getTransactions, Transaction } from "../../../lib/transactions";
 
-type Transaction = {
-    id: number;
-    recipient: string;
-    category: string;
-    date: string;
-    amount: number;
-    avatar?: string;
-};
-
-export default function TransactionsPage() {
-    const [transactions] = useState<Transaction[]>([
-        {
-            id: 1,
-            recipient: "Daniel Carter",
-            category: "Dining Out",
-            date: "Feb 9, 2026",
-            amount: -5.5,
-            avatar: "/assets/images/avatars/daniel-carter.jpg",
-        },
-        {
-            id: 2,
-            recipient: "Ella Phillips",
-            category: "Bills",
-            date: "Feb 8, 2026",
-            amount: -120,
-            avatar: "/assets/images/avatars/ella-phillips.jpg",
-        },
-        {
-            id: 3,
-            recipient: "James Thompson",
-            category: "Shopping",
-            date: "Feb 7, 2026",
-            amount: -15.99,
-            avatar: "/assets/images/avatars/james-thompson.jpg",
-        },
-    ]);
+export default async function TransactionsPage() {
+    const transactions: Transaction[] = await getTransactions();
 
     return (
         <Layout>
@@ -47,12 +12,7 @@ export default function TransactionsPage() {
 
             {/* Filters */}
             <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <input
-                    type="text"
-                    placeholder="Search transactions"
-                    className="flex-1 p-2 border border-gray-300 rounded"
-                />
-
+                <input type="text" placeholder="Search transactions" className="flex-1 p-2 border border-gray-300 rounded" />
                 <select className="p-2 border border-gray-300 rounded">
                     <option>Sort by: Latest</option>
                     <option>Oldest</option>
@@ -61,7 +21,6 @@ export default function TransactionsPage() {
                     <option>Highest</option>
                     <option>Lowest</option>
                 </select>
-
                 <select className="p-2 border border-gray-300 rounded">
                     <option>All Categories</option>
                     <option>Entertainment</option>
@@ -89,7 +48,7 @@ export default function TransactionsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {transactions.map((tx) => (
+                        {transactions.map(tx => (
                             <tr key={tx.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4 flex items-center gap-3">
                                     {tx.avatar && (
@@ -104,9 +63,9 @@ export default function TransactionsPage() {
                                     <span>{tx.recipient}</span>
                                 </td>
                                 <td className="px-6 py-4">{tx.category}</td>
-                                <td className="px-6 py-4">{tx.date}</td>
+                                <td className="px-6 py-4">{new Date(tx.date).toLocaleDateString()}</td>
                                 <td className={`px-6 py-4 text-right font-bold ${tx.amount < 0 ? "text-red-500" : "text-green-500"}`}>
-                                    ${tx.amount.toLocaleString()}
+                                    ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </td>
                             </tr>
                         ))}
