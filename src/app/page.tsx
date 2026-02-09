@@ -27,6 +27,7 @@ export default function OverviewPage() {
 
         {/* Left column: Pots & Transactions */}
         <div className="w-[55%] flex flex-col gap-6">
+
           {/* Pots Card */}
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
@@ -128,11 +129,19 @@ export default function OverviewPage() {
 
         {/* Right column: Budgets & Recurring Bills */}
         <div className="w-[45%] flex flex-col gap-6">
+
           {/* Budgets Card */}
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Budgets</h3>
-              <button className="text-blue-500 hover:underline">See Details</button>
+
+              {/* Link to Budgets page */}
+              <Link
+                href="/budgets"
+                className="text-blue-500 hover:underline text-sm"
+              >
+                See Details
+              </Link>
             </div>
 
             {/* Pie Progress */}
@@ -186,7 +195,17 @@ export default function OverviewPage() {
 
           {/* Recurring Bills Card */}
           <div className="flex flex-col gap-2 p-6 bg-white rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-2">Recurring Bills</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Recurring Bills</h3>
+
+              {/* Link to Recurring Bills page */}
+              <Link
+                href="/recurring"
+                className="text-blue-500 hover:underline text-sm"
+              >
+                See Details
+              </Link>
+            </div>
 
             {/* Stacked sections */}
             <div className="flex flex-col gap-2">
