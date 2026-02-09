@@ -26,7 +26,7 @@ export default function Layout({ children }: Props) {
                     <Link href="/pots" className="text-left hover:underline">
                         Pots
                     </Link>
-                    <Link href="/recurring-bills" className="text-left hover:underline">
+                    <Link href="/recurring" className="text-left hover:underline">
                         Recurring Bills
                     </Link>
                 </nav>
