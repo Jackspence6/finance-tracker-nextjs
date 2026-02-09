@@ -69,7 +69,14 @@ export default function OverviewPage() {
           <div className="flex-1 p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Transactions</h3>
-              <button className="text-blue-500 hover:underline">View All</button>
+
+              {/* Link to Transactions page */}
+              <Link
+                href="/transactions"
+                className="text-blue-500 hover:underline text-sm"
+              >
+                View All
+              </Link>
             </div>
 
             <ul className="flex-1 overflow-y-auto space-y-4">
