@@ -87,8 +87,10 @@ export default function BudgetsPage() {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-6">
+
                 {/* Left column */}
                 <div className="lg:w-1/3 flex flex-col gap-6">
+
                     {/* Overall Budget Progress */}
                     <div className="p-6 bg-white rounded-lg shadow flex flex-col gap-4">
                         <h2 className="text-lg font-semibold">Overall Budget</h2>
