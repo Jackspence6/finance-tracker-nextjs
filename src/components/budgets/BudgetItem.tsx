@@ -8,7 +8,7 @@ import DeleteBudgetModal from "./DeleteBudgetModal";
 type Transaction = {
     id: number;
     name: string;
-    avatar: string;
+    avatar?: string;
     amount: number;
     date: string;
 };
@@ -47,7 +47,6 @@ export default function BudgetItem({
 
     return (
         <div className="p-6 bg-white rounded-lg shadow flex flex-col gap-3 relative">
-
             {/* Header */}
             <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">{category}</h3>
@@ -64,19 +63,13 @@ export default function BudgetItem({
                         <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow z-10">
                             <button
                                 className="block w-full text-left px-3 py-2 hover:bg-gray-100"
-                                onClick={() => {
-                                    setEditOpen(true);
-                                    setMenuOpen(false);
-                                }}
+                                onClick={() => setEditOpen(true)}
                             >
                                 Edit
                             </button>
                             <button
                                 className="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500"
-                                onClick={() => {
-                                    setDeleteOpen(true);
-                                    setMenuOpen(false);
-                                }}
+                                onClick={() => setDeleteOpen(true)}
                             >
                                 Delete
                             </button>
@@ -85,15 +78,10 @@ export default function BudgetItem({
                 </div>
             </div>
 
-            <span className="text-sm text-gray-600">
-                ${spent} / ${limit}
-            </span>
-
+            {/* Progress */}
+            <span className="text-sm text-gray-600">${spent} / ${limit}</span>
             <div className="w-full bg-gray-200 rounded-full h-4">
-                <div
-                    className={`${color} h-4 rounded-full`}
-                    style={{ width: `${progress}%` }}
-                />
+                <div className={`${color} h-4 rounded-full`} style={{ width: `${progress}%` }} />
             </div>
 
             {/* Latest Transactions */}
@@ -103,13 +91,15 @@ export default function BudgetItem({
                     {latestTransactions.map((t) => (
                         <li key={t.id} className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
-                                <Image
-                                    src={t.avatar}
-                                    alt={t.name}
-                                    width={32}
-                                    height={32}
-                                    className="rounded-full"
-                                />
+                                {t.avatar && (
+                                    <Image
+                                        src={t.avatar}
+                                        alt={t.name}
+                                        width={32}
+                                        height={32}
+                                        className="rounded-full"
+                                    />
+                                )}
                                 <span>{t.name}</span>
                             </div>
                             <span className="font-bold">${t.amount}</span>
@@ -119,25 +109,21 @@ export default function BudgetItem({
                 </ul>
             </div>
 
+            {/* Modals */}
             <EditBudgetModal
                 category={category}
                 limit={limit}
                 color={color}
                 isOpen={editOpen}
                 onClose={() => setEditOpen(false)}
-                onSave={({ limit, color }) => {
-                    console.log("Updated budget:", category, limit, color);
-                }}
+                onSave={({ limit, color }) => console.log("Updated budget:", category, limit, color)}
             />
 
             <DeleteBudgetModal
                 category={category}
                 isOpen={deleteOpen}
                 onClose={() => setDeleteOpen(false)}
-                onConfirm={() => {
-                    alert(`Deleted ${category}`);
-                    setDeleteOpen(false);
-                }}
+                onConfirm={() => setDeleteOpen(false)}
             />
         </div>
     );

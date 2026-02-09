@@ -2,9 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import { getBalance, Balance } from "../../lib/balances";
+import { getBudgets, Budget } from "../../lib/budgets";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
+  const budgets: Budget[] = await getBudgets();
+
+  const totalBudgetSpent = budgets.reduce((acc, b) => acc + b.spent, 0);
+  const totalBudgetLimit = budgets.reduce((acc, b) => acc + b.limit, 0);
+
+  const totalBudgetPercentage =
+    totalBudgetLimit > 0
+      ? Math.min(100, (totalBudgetSpent / totalBudgetLimit) * 100)
+      : 0;
 
   return (
     <Layout>
@@ -36,17 +46,11 @@ export default async function OverviewPage() {
 
         {/* Left column: Pots & Transactions */}
         <div className="w-[55%] flex flex-col gap-6">
-
           {/* Pots Card */}
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Pots</h3>
-
-              {/* Link to Pots page */}
-              <Link
-                href="/pots"
-                className="text-blue-500 hover:underline text-sm"
-              >
+              <Link href="/pots" className="text-blue-500 hover:underline text-sm">
                 See Details
               </Link>
             </div>
@@ -74,13 +78,10 @@ export default async function OverviewPage() {
             </ul>
           </div>
 
-
           {/* Transactions Card */}
           <div className="flex-1 p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Transactions</h3>
-
-              {/* Link to Transactions page */}
               <Link
                 href="/transactions"
                 className="text-blue-500 hover:underline text-sm"
@@ -90,48 +91,26 @@ export default async function OverviewPage() {
             </div>
 
             <ul className="flex-1 overflow-y-auto space-y-4">
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/assets/images/avatars/daniel-carter.jpg"
-                    alt="Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <span>Daniel Carter</span>
-                </div>
-                <span className="font-bold">-$5.50</span>
-                <span className="text-gray-500 text-sm">Feb 9, 2026</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/assets/images/avatars/ella-phillips.jpg"
-                    alt="Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <span>Ella Phillips</span>
-                </div>
-                <span className="font-bold">-$120.00</span>
-                <span className="text-gray-500 text-sm">Feb 8, 2026</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Image
-                    src="/assets/images/avatars/james-thompson.jpg"
-                    alt="Avatar"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <span>James Thompson</span>
-                </div>
-                <span className="font-bold">-$15.99</span>
-                <span className="text-gray-500 text-sm">Feb 7, 2026</span>
-              </li>
+              {budgets.flatMap((b) => b.latestTransactions).map((t) => (
+                <li key={t.id} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {t.avatar && (
+                      <Image
+                        src={t.avatar}
+                        alt={t.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    )}
+                    <span>{t.name}</span>
+                  </div>
+                  <span className="font-bold">${t.amount}</span>
+                  <span className="text-gray-500 text-sm">
+                    {new Date(t.date).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -143,12 +122,7 @@ export default async function OverviewPage() {
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Budgets</h3>
-
-              {/* Link to Budgets page */}
-              <Link
-                href="/budgets"
-                className="text-blue-500 hover:underline text-sm"
-              >
+              <Link href="/budgets" className="text-blue-500 hover:underline text-sm">
                 See Details
               </Link>
             </div>
@@ -168,7 +142,7 @@ export default async function OverviewPage() {
                 <circle
                   className="text-blue-500"
                   strokeWidth="4"
-                  strokeDasharray="70, 100"
+                  strokeDasharray={`${totalBudgetPercentage}, 100`}
                   strokeLinecap="round"
                   stroke="currentColor"
                   fill="none"
@@ -178,40 +152,31 @@ export default async function OverviewPage() {
                   transform="rotate(-90 18 18)"
                 />
               </svg>
-              <p className="text-center font-bold mt-2">70% spent</p>
+              <p className="text-center font-bold mt-2">
+                {totalBudgetPercentage.toFixed(0)}% spent
+              </p>
             </div>
 
             {/* Budget items */}
             <ul className="space-y-3 flex-1">
-              <li className="flex justify-between">
-                <span>Groceries</span>
-                <span>$200 / $300</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Entertainment</span>
-                <span>$150 / $200</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Utilities</span>
-                <span>$100 / $150</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Transport</span>
-                <span>$50 / $100</span>
-              </li>
+              {budgets.map((b) => (
+                <li key={b.id} className="flex justify-between">
+                  <span>{b.category}</span>
+                  <span>${b.spent} / ${b.limit}</span>
+                </li>
+              ))}
             </ul>
+
+            <div className="mt-4 text-sm text-gray-500">
+              Total spent: ${totalBudgetSpent} / ${totalBudgetLimit}
+            </div>
           </div>
 
           {/* Recurring Bills Card */}
           <div className="flex flex-col gap-2 p-6 bg-white rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Recurring Bills</h3>
-
-              {/* Link to Recurring Bills page */}
-              <Link
-                href="/recurring"
-                className="text-blue-500 hover:underline text-sm"
-              >
+              <Link href="/recurring" className="text-blue-500 hover:underline text-sm">
                 See Details
               </Link>
             </div>
@@ -235,6 +200,5 @@ export default async function OverviewPage() {
         </div>
       </section>
     </Layout>
-
   );
 }
