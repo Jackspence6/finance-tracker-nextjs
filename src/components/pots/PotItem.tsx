@@ -58,34 +58,34 @@ export default function PotItem({
             {/* Total Saved */}
             <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Total Saved</span>
-                <span className="text-lg font-bold">${currentAmount.toLocaleString()}</span>
+                <span className="text-lg font-bold">${currentAmount.toLocaleString("en-US")}</span>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-4">
+            <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
-                    className="bg-blue-500 h-4 rounded-full"
+                    className="bg-blue-300 h-3 rounded-full"
                     style={{ width: `${progress}%` }}
                 />
             </div>
 
             {/* Progress Label & Target */}
             <div className="flex justify-between text-sm text-gray-600">
-                <span>{progress.toFixed(0)}% completed</span>
-                <span>Target: ${targetAmount.toLocaleString()}</span>
+                <span>{progress.toFixed(0)}%</span>
+                <span>Target: ${targetAmount.toLocaleString("en-US")}</span>
             </div>
 
             {/* Buttons */}
             <div className="flex gap-2">
                 <button
                     onClick={onAdd}
-                    className="flex-1 px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    className="flex-1 px-3 py-2 bg-gray-100 text-black font-bold rounded hover:bg-gray-300"
                 >
-                    Add Money
+                    + Add Money
                 </button>
                 <button
                     onClick={onWithdraw}
-                    className="flex-1 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="flex-1 px-3 py-2 bg-gray-100 text-black font-bold rounded hover:bg-gray-300"
                 >
                     Withdraw
                 </button>
