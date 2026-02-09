@@ -4,11 +4,36 @@ import Layout from "../components/Layout";
 import { getBalance, Balance } from "../../lib/balances";
 import { getBudgets, Budget } from "../../lib/budgets";
 import { getPots, Pot } from "../../lib/pots";
+import { getRecurringBills, RecurringBill } from "../../lib/recurring";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
   const budgets: Budget[] = await getBudgets();
   const pots: Pot[] = await getPots();
+  const bills: RecurringBill[] = await getRecurringBills();
+
+  // Reference date for status calculations
+  const referenceDate = new Date("2024-08-01T00:00:00Z");
+
+  const billsWithStatus = bills.map((bill) => {
+    const billDate = new Date(bill.date);
+    let status: "Paid" | "Upcoming" | "Due Soon" = "Upcoming";
+    const diffDays = (billDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (diffDays < 0) status = "Paid";
+    else if (diffDays <= 3) status = "Due Soon";
+
+    return { ...bill, status };
+  });
+
+  const totalBills = billsWithStatus.reduce((sum, b) => sum + b.amount, 0);
+  const paidBills = billsWithStatus
+    .filter((b) => b.status === "Paid")
+    .reduce((sum, b) => sum + b.amount, 0);
+  const upcomingBills = billsWithStatus
+    .filter((b) => b.status === "Upcoming")
+    .reduce((sum, b) => sum + b.amount, 0);
+  const dueSoonCount = billsWithStatus.filter((b) => b.status === "Due Soon").length;
 
   const totalBudgetSpent = budgets.reduce((acc, b) => acc + b.spent, 0);
   const totalBudgetLimit = budgets.reduce((acc, b) => acc + b.limit, 0);
@@ -49,7 +74,6 @@ export default async function OverviewPage() {
 
         {/* Left column: Pots & Transactions */}
         <div className="w-[55%] flex flex-col gap-6">
-
           {/* Pots Card */}
           <div className="p-6 bg-white rounded-lg shadow flex flex-col">
             <div className="flex justify-between items-center mb-4">
@@ -58,10 +82,8 @@ export default async function OverviewPage() {
                 See Details
               </Link>
             </div>
-
             <h4 className="text-lg font-semibold mb-4">Total Saved</h4>
             <p className="text-2xl font-bold mb-6">${totalPotSaved.toLocaleString()}</p>
-
             <ul className="space-y-2">
               {pots.map((p) => (
                 <li key={p.id} className="flex justify-between">
@@ -82,7 +104,6 @@ export default async function OverviewPage() {
                 View All
               </Link>
             </div>
-
             <ul className="flex-1 overflow-y-auto space-y-4">
               {budgets.flatMap((b) => b.latestTransactions).map((t) => (
                 <li key={t.id} className="flex items-center justify-between">
@@ -119,8 +140,6 @@ export default async function OverviewPage() {
                 See Details
               </Link>
             </div>
-
-            {/* Pie Progress */}
             <div className="w-32 h-32 mx-auto mb-6">
               <svg viewBox="0 0 36 36" className="w-full h-full">
                 <circle
@@ -149,8 +168,6 @@ export default async function OverviewPage() {
                 {totalBudgetPercentage.toFixed(0)}% spent
               </p>
             </div>
-
-            {/* Budget items */}
             <ul className="space-y-3 flex-1">
               {budgets.map((b) => (
                 <li key={b.id} className="flex justify-between">
@@ -159,7 +176,6 @@ export default async function OverviewPage() {
                 </li>
               ))}
             </ul>
-
             <div className="mt-4 text-sm text-gray-500">
               Total spent: ${totalBudgetSpent} / ${totalBudgetLimit}
             </div>
@@ -174,19 +190,23 @@ export default async function OverviewPage() {
               </Link>
             </div>
 
-            {/* Stacked sections */}
+            {/* Dynamic Summary */}
             <div className="flex flex-col gap-2">
               <div className="p-2 bg-gray-50 rounded-lg shadow-inner text-center">
                 <h4 className="font-semibold mb-1 text-sm">Paid Bills Total</h4>
-                <p className="text-lg font-bold">$1,200</p>
+                <p className="text-lg font-bold">${paidBills.toLocaleString()}</p>
               </div>
               <div className="p-2 bg-gray-50 rounded-lg shadow-inner text-center">
                 <h4 className="font-semibold mb-1 text-sm">Total Upcoming Bills</h4>
-                <p className="text-lg font-bold">$800</p>
+                <p className="text-lg font-bold">${upcomingBills.toLocaleString()}</p>
               </div>
               <div className="p-2 bg-gray-50 rounded-lg shadow-inner text-center">
                 <h4 className="font-semibold mb-1 text-sm">Due Soon</h4>
-                <p className="text-lg font-bold">3 Bills</p>
+                <p className="text-lg font-bold">{dueSoonCount} Bills</p>
+              </div>
+              <div className="p-2 bg-gray-50 rounded-lg shadow-inner text-center">
+                <h4 className="font-semibold mb-1 text-sm">Total Bills</h4>
+                <p className="text-lg font-bold">${totalBills.toLocaleString()}</p>
               </div>
             </div>
           </div>

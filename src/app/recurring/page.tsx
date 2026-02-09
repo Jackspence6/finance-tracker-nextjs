@@ -1,30 +1,32 @@
-"use client";
-
-import React, { useState } from "react";
 import Layout from "../../components/Layout";
+import { getRecurringBills, RecurringBill } from "../../../lib/recurring";
 
-type Bill = {
-    id: number;
-    name: string;
-    category: string;
-    dueDate: string;
-    amount: number;
-    status: "Paid" | "Upcoming" | "Due Soon";
-};
+export default async function RecurringBillsPage() {
+    const bills: RecurringBill[] = await getRecurringBills();
 
-export default function RecurringBillsPage() {
-    const [bills] = useState<Bill[]>([
-        { id: 1, name: "Electricity", category: "Utilities", dueDate: "Feb 10, 2026", amount: 120, status: "Paid" },
-        { id: 2, name: "Water", category: "Utilities", dueDate: "Feb 15, 2026", amount: 45, status: "Upcoming" },
-        { id: 3, name: "Netflix", category: "Entertainment", dueDate: "Feb 12, 2026", amount: 15, status: "Due Soon" },
-        { id: 4, name: "Gym", category: "Lifestyle", dueDate: "Feb 20, 2026", amount: 50, status: "Upcoming" },
-    ]);
+    // Reference date for calculations
+    const referenceDate = new Date("2024-08-01T00:00:00Z");
 
-    // Summary calculations
-    const totalBills = bills.reduce((sum, bill) => sum + bill.amount, 0);
-    const paidBills = bills.filter((b) => b.status === "Paid").reduce((sum, b) => sum + b.amount, 0);
-    const upcomingBills = bills.filter((b) => b.status === "Upcoming").reduce((sum, b) => sum + b.amount, 0);
-    const dueSoonBills = bills.filter((b) => b.status === "Due Soon").length;
+    const billsWithStatus = bills.map((bill) => {
+        const dueDate = new Date(bill.date);
+        let status: "Paid" | "Upcoming" | "Due Soon" = "Upcoming";
+
+        const diffDays = (dueDate.getTime() - referenceDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (diffDays < 0) status = "Paid";
+        else if (diffDays <= 3) status = "Due Soon";
+
+        return { ...bill, status };
+    });
+
+    const totalBills = billsWithStatus.reduce((sum, b) => sum + b.amount, 0);
+    const paidBills = billsWithStatus
+        .filter((b) => b.status === "Paid")
+        .reduce((sum, b) => sum + b.amount, 0);
+    const upcomingBills = billsWithStatus
+        .filter((b) => b.status === "Upcoming")
+        .reduce((sum, b) => sum + b.amount, 0);
+    const dueSoonCount = billsWithStatus.filter((b) => b.status === "Due Soon").length;
 
     return (
         <Layout>
@@ -43,25 +45,8 @@ export default function RecurringBillsPage() {
                 <div className="p-4 bg-white rounded-lg shadow text-center">
                     <h3 className="font-semibold text-gray-600 mb-1">Total Upcoming</h3>
                     <p className="text-2xl font-bold">${upcomingBills.toLocaleString()}</p>
-                    <p className="text-gray-500 text-sm">{dueSoonBills} Due Soon</p>
+                    <p className="text-gray-500 text-sm">{dueSoonCount} Due Soon</p>
                 </div>
-            </div>
-
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <input
-                    type="text"
-                    placeholder="Search bills"
-                    className="flex-1 p-2 border border-gray-300 rounded"
-                />
-                <select className="p-2 border border-gray-300 rounded">
-                    <option>Sort by: Latest</option>
-                    <option>Oldest</option>
-                    <option>A to Z</option>
-                    <option>Z to A</option>
-                    <option>Highest</option>
-                    <option>Lowest</option>
-                </select>
             </div>
 
             {/* Bills Table */}
@@ -77,25 +62,26 @@ export default function RecurringBillsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {bills.map((bill) => (
+                        {billsWithStatus.map((bill) => (
                             <tr key={bill.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">{bill.name}</td>
                                 <td className="px-6 py-4">{bill.category}</td>
-                                <td className="px-6 py-4">{bill.dueDate}</td>
+                                <td className="px-6 py-4">{new Date(bill.date).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 text-right font-bold">${bill.amount.toLocaleString()}</td>
-                                <td className={`px-6 py-4 font-semibold ${bill.status === "Paid" ? "text-green-500" : bill.status === "Upcoming" ? "text-blue-500" : "text-red-500"}`}>
+                                <td
+                                    className={`px-6 py-4 font-semibold ${bill.status === "Paid"
+                                        ? "text-green-500"
+                                        : bill.status === "Upcoming"
+                                            ? "text-blue-500"
+                                            : "text-red-500"
+                                        }`}
+                                >
                                     {bill.status}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-between mt-4">
-                <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Prev</button>
-                <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next</button>
             </div>
         </Layout>
     );
