@@ -29,3 +29,31 @@ export async function getPots(): Promise<Pot[]> {
         theme: row.theme,
     }));
 }
+
+export async function createPot(
+    name: string,
+    target: number,
+    theme: string
+) {
+    await query(
+        `INSERT INTO pots (name, target, total, theme)
+     VALUES ($1, $2, 0, $3)`,
+        [name, target, theme]
+    );
+}
+
+export async function updatePot(
+    id: number,
+    name: string,
+    target: number,
+    theme: string
+) {
+    await query(
+        `UPDATE pots SET name = $1, target = $2, theme = $3 WHERE id = $4`,
+        [name, target, theme, id]
+    );
+}
+
+export async function deletePot(id: number) {
+    await query(`DELETE FROM pots WHERE id = $1`, [id]);
+}

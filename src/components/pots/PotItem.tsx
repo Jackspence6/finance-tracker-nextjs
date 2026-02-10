@@ -1,11 +1,8 @@
-"use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
+import type { Pot } from "../../../lib/pots";
 
 interface PotItemProps {
-    title: string;
-    currentAmount: number;
-    targetAmount: number;
+    pot: Pot;
     onAdd?: () => void;
     onWithdraw?: () => void;
     onEdit?: () => void;
@@ -13,20 +10,18 @@ interface PotItemProps {
 }
 
 export default function PotItem({
-    title,
-    currentAmount,
-    targetAmount,
+    pot,
     onAdd,
     onWithdraw,
     onEdit,
     onDelete,
 }: PotItemProps) {
+    const { title, currentAmount, targetAmount } = pot;
     const progress = Math.min(100, (currentAmount / targetAmount) * 100);
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
         <div className="relative p-4 bg-white rounded-lg shadow flex flex-col gap-3">
-
             {/* Ellipsis Menu */}
             <div className="absolute top-2 right-2">
                 <button
@@ -35,8 +30,9 @@ export default function PotItem({
                 >
                     &#x2026;
                 </button>
+
                 {menuOpen && (
-                    <div className="absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-28 bg-white border rounded shadow-lg z-10">
                         <button
                             onClick={onEdit}
                             className="block w-full text-left px-3 py-2 hover:bg-gray-100"
@@ -55,13 +51,13 @@ export default function PotItem({
 
             <h3 className="text-lg font-semibold">{title}</h3>
 
-            {/* Total Saved */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Total Saved</span>
-                <span className="text-lg font-bold">${currentAmount.toLocaleString("en-US")}</span>
+                <span className="text-lg font-bold">
+                    ${currentAmount.toLocaleString()}
+                </span>
             </div>
 
-            {/* Progress Bar */}
             <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                     className="bg-blue-300 h-3 rounded-full"
@@ -69,13 +65,11 @@ export default function PotItem({
                 />
             </div>
 
-            {/* Progress Label & Target */}
             <div className="flex justify-between text-sm text-gray-600">
                 <span>{progress.toFixed(0)}%</span>
                 <span>Target: ${targetAmount.toLocaleString("en-US")}</span>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-2">
                 <button
                     onClick={onAdd}
