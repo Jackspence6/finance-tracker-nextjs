@@ -6,6 +6,7 @@ import { getBudgets, Budget } from "../../lib/budgets";
 import { getPots, Pot } from "../../lib/pots";
 import { getRecurringBills, RecurringBill } from "../../lib/recurring";
 import BudgetsPieChart from "../components/budgets/BudgetsPieChart";
+import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
@@ -92,10 +93,18 @@ export default async function OverviewPage() {
                 />
               </Link>
             </div>
-            <h4 className="text-lg font-semibold mb-4">Total Saved</h4>
-            <p className="text-2xl font-bold mb-6">
-              ${totalPotSaved.toLocaleString()}
-            </p>
+
+            {/* Total Saved Box */}
+            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg shadow mb-6">
+              <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center">
+                <CurrencyDollarIcon className="w-6 h-6" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm text-gray-600">Total Saved</span>
+                <span className="text-2xl font-bold">${totalPotSaved.toLocaleString()}</span>
+              </div>
+            </div>
+
             <ul className="space-y-2">
               {pots.map((p) => (
                 <li key={p.id} className="flex justify-between">
