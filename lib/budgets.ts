@@ -28,12 +28,10 @@ export async function getBudgets(): Promise<Budget[]> {
       b.id AS budget_id,
       c.name AS category,
       b.maximum AS limit,
-      COALESCE(SUM(t.amount), 0) AS spent
+      COALESCE(SUM(CASE WHEN t.amount < 0 THEN -t.amount ELSE 0 END), 0) AS spent
     FROM budgets b
     JOIN categories c ON b.category_id = c.id
-    LEFT JOIN transactions t
-      ON t.category_id = c.id
-      AND t.amount < 0
+    LEFT JOIN transactions t ON t.category_id = c.id
     GROUP BY b.id, c.name
     ORDER BY c.name
   `);
@@ -43,22 +41,22 @@ export async function getBudgets(): Promise<Budget[]> {
     for (const row of result.rows) {
         const txResult = await query<BudgetTransaction>(
             `
-      SELECT
-        t.id,
-        t.name,
-        t.avatar,
-        t.amount,
-        t.transaction_date AS date
-      FROM transactions t
-      JOIN categories c ON t.category_id = c.id
-      WHERE c.name = $1
-      ORDER BY t.transaction_date DESC
-      LIMIT 1
+        SELECT
+          t.id,
+          t.name,
+          t.avatar,
+          t.amount,
+          t.transaction_date AS date
+        FROM transactions t
+        JOIN categories c ON t.category_id = c.id
+        WHERE c.name = $1
+        ORDER BY t.transaction_date DESC
+        LIMIT 1
       `,
             [row.category]
         );
 
-        const latestTransactions = txResult.rows.map(tx => ({
+        const latestTransactions = txResult.rows.map((tx) => ({
             ...tx,
             amount: Number(tx.amount),
             date: new Date(tx.date).toISOString(),
