@@ -51,7 +51,7 @@ export async function getBudgets(): Promise<Budget[]> {
         JOIN categories c ON t.category_id = c.id
         WHERE c.name = $1
         ORDER BY t.transaction_date DESC
-        LIMIT 1
+        LIMIT 3
       `,
             [row.category]
         );

@@ -54,13 +54,13 @@ export default async function TransactionsPage() {
                                     {tx.avatar && (
                                         <Image
                                             src={tx.avatar}
-                                            alt={tx.recipient}
+                                            alt={tx.name}
                                             width={40}
                                             height={40}
                                             className="rounded-full"
                                         />
                                     )}
-                                    <span>{tx.recipient}</span>
+                                    <span>{tx.name}</span>
                                 </td>
                                 <td className="px-6 py-4">{tx.category}</td>
                                 <td className="px-6 py-4">{new Date(tx.date).toLocaleDateString()}</td>
