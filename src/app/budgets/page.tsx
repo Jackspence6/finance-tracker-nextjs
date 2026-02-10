@@ -1,6 +1,7 @@
 import Layout from "../../components/Layout";
 import BudgetItem from "../../components/budgets/BudgetItem";
 import { getBudgets, Budget } from "../../../lib/budgets";
+import OverallBudgetDonut from "../../components/budgets/OverallBudgetDonut";
 
 export default async function BudgetsPage() {
     const budgets: Budget[] = await getBudgets();
@@ -23,12 +24,10 @@ export default async function BudgetsPage() {
                     {/* Overall Budget */}
                     <div className="p-6 bg-white rounded-lg shadow flex flex-col gap-4">
                         <h2 className="text-lg font-semibold">Overall Budget</h2>
-                        <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div
-                                className="bg-blue-500 h-4 rounded-full"
-                                style={{ width: `${(totalSpent / totalBudget) * 100}%` }}
-                            />
-                        </div>
+                        <OverallBudgetDonut
+                            totalSpent={totalSpent}
+                            totalLimit={totalBudget}
+                        />
                         <p className="text-sm text-gray-600 mt-1">
                             ${totalSpent} spent of ${totalBudget}
                         </p>

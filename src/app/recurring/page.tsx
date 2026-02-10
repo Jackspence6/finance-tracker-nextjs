@@ -34,8 +34,8 @@ export default async function RecurringBillsPage() {
 
             {/* Summary cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="p-4 bg-white rounded-lg shadow text-center">
-                    <h3 className="font-semibold text-gray-600 mb-1">Total Bills</h3>
+                <div className="p-4 bg-black text-white rounded-lg shadow text-center">
+                    <h3 className="font-semibold mb-1">Total Bills</h3>
                     <p className="text-2xl font-bold">${totalBills.toLocaleString()}</p>
                 </div>
                 <div className="p-4 bg-white rounded-lg shadow text-center">
