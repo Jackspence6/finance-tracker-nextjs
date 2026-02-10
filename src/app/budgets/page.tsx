@@ -12,6 +12,9 @@ export default async function BudgetsPage() {
         <Layout>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold">Budgets</h1>
+                <button className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                    + Add New Budget
+                </button>
             </div>
 
             <div className="flex flex-col lg:flex-row gap-6">
