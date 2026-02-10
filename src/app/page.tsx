@@ -50,7 +50,7 @@ export default async function OverviewPage() {
 
       {/* Current Balance / Income / Expenses */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white rounded-lg shadow-lg">
+        <div className="p-4 bg-black text-white rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold">Current Balance</h2>
           <p className="text-2xl font-bold">
             ${balance ? parseFloat(balance.current_balance).toFixed(2) : "0.00"}
