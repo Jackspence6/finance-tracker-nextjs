@@ -57,3 +57,15 @@ export async function updatePot(
 export async function deletePot(id: number) {
     await query(`DELETE FROM pots WHERE id = $1`, [id]);
 }
+
+export async function addMoneyToPot(potId: number, amount: number) {
+    await query(`UPDATE pots SET total = total + $1 WHERE id = $2`, [amount, potId]);
+}
+
+export async function withdrawMoneyFromPot(potId: number, amount: number) {
+    // preventing negative balances
+    await query(
+        `UPDATE pots SET total = GREATEST(total - $1, 0) WHERE id = $2`,
+        [amount, potId]
+    );
+}
