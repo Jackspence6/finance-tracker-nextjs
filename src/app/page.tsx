@@ -6,7 +6,6 @@ import { getBudgets, Budget } from "../../lib/budgets";
 import { getPots, Pot } from "../../lib/pots";
 import { getRecurringBills, RecurringBill } from "../../lib/recurring";
 import BudgetsPieChart from "../components/budgets/BudgetsPieChart";
-import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
@@ -96,8 +95,13 @@ export default async function OverviewPage() {
 
             {/* Total Saved Box */}
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg shadow mb-6">
-              <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center">
-                <CurrencyDollarIcon className="w-6 h-6" />
+              <div className="w-12 h-12 text-white rounded-full flex items-center justify-center">
+                <Image
+                  src="/assets/images/icon-pot.svg"
+                  alt="Pots"
+                  width={25}
+                  height={25}
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-600">Total Saved</span>
