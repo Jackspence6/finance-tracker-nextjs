@@ -5,6 +5,7 @@ import { getBalance, Balance } from "../../lib/balances";
 import { getBudgets, Budget } from "../../lib/budgets";
 import { getPots, Pot } from "../../lib/pots";
 import { getRecurringBills, RecurringBill } from "../../lib/recurring";
+import BudgetsPieChart from "../components/budgets/BudgetsPieChart";
 
 export default async function OverviewPage() {
   const balance: Balance | null = await getBalance();
@@ -140,34 +141,11 @@ export default async function OverviewPage() {
                 See Details
               </Link>
             </div>
-            <div className="w-32 h-32 mx-auto mb-6">
-              <svg viewBox="0 0 36 36" className="w-full h-full">
-                <circle
-                  className="text-gray-200"
-                  strokeWidth="4"
-                  stroke="currentColor"
-                  fill="none"
-                  cx="18"
-                  cy="18"
-                  r="16"
-                />
-                <circle
-                  className="text-blue-500"
-                  strokeWidth="4"
-                  strokeDasharray={`${totalBudgetPercentage}, 100`}
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="none"
-                  cx="18"
-                  cy="18"
-                  r="16"
-                  transform="rotate(-90 18 18)"
-                />
-              </svg>
-              <p className="text-center font-bold mt-2">
-                {totalBudgetPercentage.toFixed(0)}% spent
-              </p>
+
+            <div className="w-full h-64 mb-4">
+              <BudgetsPieChart budgets={budgets} />
             </div>
+
             <ul className="space-y-3 flex-1">
               {budgets.map((b) => (
                 <li key={b.id} className="flex justify-between">
@@ -180,6 +158,7 @@ export default async function OverviewPage() {
               Total spent: ${totalBudgetSpent} / ${totalBudgetLimit}
             </div>
           </div>
+
 
           {/* Recurring Bills Card */}
           <div className="flex flex-col gap-2 p-6 bg-white rounded-lg shadow">
