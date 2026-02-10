@@ -89,8 +89,9 @@ export default function BudgetItem({
                 <h4 className="text-sm font-semibold mb-2">Latest Spending</h4>
                 <ul className="space-y-2">
                     {latestTransactions.map((t) => (
-                        <li key={t.id} className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-3">
+                        <li key={t.id} className="flex items-center justify-between">
+                            {/* Name + avatar */}
+                            <div className="flex items-center gap-3 w-1/2 truncate">
                                 {t.avatar && (
                                     <Image
                                         src={t.avatar}
@@ -100,10 +101,18 @@ export default function BudgetItem({
                                         className="rounded-full"
                                     />
                                 )}
-                                <span>{t.name}</span>
+                                <span className="truncate">{t.name}</span>
                             </div>
-                            <span className="font-bold">${t.amount}</span>
-                            <span className="text-gray-500 text-sm">{t.date}</span>
+
+                            {/* Amount */}
+                            <span className="w-1/4 text-right font-bold">
+                                ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </span>
+
+                            {/* Date */}
+                            <span className="w-1/4 text-right text-gray-500 text-sm">
+                                {new Date(t.date).toLocaleDateString()}
+                            </span>
                         </li>
                     ))}
                 </ul>

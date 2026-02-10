@@ -128,30 +128,36 @@ export default async function OverviewPage() {
                 />
               </Link>
             </div>
-            <ul className="flex-1 overflow-y-auto space-y-4">
-              {budgets
-                .flatMap((b) => b.latestTransactions)
-                .map((t) => (
-                  <li key={t.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {t.avatar && (
-                        <Image
-                          src={t.avatar}
-                          alt={t.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                      )}
-                      <span>{t.name}</span>
-                    </div>
-                    <span className="font-bold">${t.amount}</span>
-                    <span className="text-gray-500 text-sm">
-                      {new Date(t.date).toLocaleDateString()}
-                    </span>
-                  </li>
-                ))}
-            </ul>
+            <div className="overflow-x-auto bg-white rounded-lg shadow flex-1">
+              <table className="min-w-full divide-y divide-gray-200 table-fixed">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 w-1/2">Recipient/Sender</th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 w-1/4">Date</th>
+                    <th className="px-4 py-2 text-right text-sm font-semibold text-gray-700 w-1/4">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {budgets
+                    .flatMap(b => b.latestTransactions)
+                    .map(t => (
+                      <tr key={t.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-2 flex items-center gap-2">
+                          {t.avatar && (
+                            <Image src={t.avatar} alt={t.name} width={32} height={32} className="rounded-full" />
+                          )}
+                          <span className="truncate">{t.name}</span>
+                        </td>
+                        <td className="px-4 py-2">{new Date(t.date).toLocaleDateString()}</td>
+                        <td className={`px-4 py-2 text-right font-bold ${t.amount < 0 ? "text-red-500" : "text-green-500"}`}>
+                          ${t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
           </div>
         </div>
 
