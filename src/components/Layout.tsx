@@ -25,15 +25,18 @@ export default function Layout({ children }: Props) {
         <div className="min-h-screen flex bg-gray-100">
             {/* Sidebar */}
             <aside className="w-64 bg-black shadow-lg p-6 flex flex-col">
-                <div className="mb-8">
-                    <Image
-                        src="/assets/images/logo-large.svg"
-                        alt="Finance logo"
-                        width={140}
-                        height={40}
-                        priority
-                    />
+                <div className="mb-8 flex justify-center">
+                    <Link href="/">
+                        <Image
+                            src="/assets/images/logo-large.svg"
+                            alt="Finance logo"
+                            width={140}
+                            height={40}
+                            priority
+                        />
+                    </Link>
                 </div>
+
                 <nav className="flex flex-col gap-2">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
