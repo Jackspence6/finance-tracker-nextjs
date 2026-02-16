@@ -1,4 +1,3 @@
-// src/app/transactions/TransactionsTable.tsx
 "use client";
 
 import { useState, useMemo } from "react";
