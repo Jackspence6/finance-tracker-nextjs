@@ -1,26 +1,36 @@
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
+# Dependencies & Build
+FROM --platform=linux/amd64 node:20-alpine AS build
 
-FROM node:20-alpine AS builder
+# Create app directory
 WORKDIR /app
+
+# Install dependencies first (cacheable)
+COPY package.json package-lock.json* ./
+RUN npm ci --production=false
+
+# Copy rest of the app
 COPY . .
-COPY --from=deps /app/node_modules ./node_modules
+
+# Build the Next.js application
 RUN npm run build
 
-# Production image
-FROM node:20-alpine AS runner
+# Production Runtime
+FROM --platform=linux/amd64 node:20-alpine AS production
+
+# Set working directory
 WORKDIR /app
 
+# Only copy the production dependencies & output from build
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/node_modules ./node_modules
+
+# Set environment
 ENV NODE_ENV=production
 
-# Copy built app & node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
-
+# Expose port
 EXPOSE 3000
 
+# Run app
 CMD ["npm", "start"]
