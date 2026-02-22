@@ -7,7 +7,7 @@ import DeletePotModal from "../../components/pots/DeletePotModal";
 import AddPotModal from "../../components/pots/AddPotModal";
 import AdjustPotModal from "../../components/pots/AdjustPotModal";
 import type { Pot } from "../../../lib/pots";
-import { removePot, addMoney, withdrawMoney } from "./actions"; // server actions
+import { removePot, addMoney, withdrawMoney } from "./actions";
 
 export default function PotsClient({ pots }: { pots: Pot[] }) {
     const [selectedPot, setSelectedPot] = useState<Pot | null>(null);
